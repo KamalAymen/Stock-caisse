@@ -11,6 +11,12 @@ public class Merchant {
 
     private String name;
 
+    // Nouveau champ pour stocker le chemin du logo
+    private String logoPath;
+
+    // Champ pour stocker l'adresse du commerçant (utile pour le ticket)
+    private String address;
+
     // Getters et Setters
     public Long getId() {
         return id;
@@ -26,5 +32,23 @@ public class Merchant {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    // Nouveaux getters et setters pour logoPath
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
+    }
+
+    // Nouveaux getters et setters pour address
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

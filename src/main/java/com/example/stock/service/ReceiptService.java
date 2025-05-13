@@ -115,6 +115,16 @@ public class ReceiptService {
         return str.length() <= length ? str : str.substring(0, length - 3) + "...";
     }
 
+    /**
+     * Récupère un ticket par son ID
+     * @param receiptId ID du ticket
+     * @return le ticket
+     */
+    public Receipt getReceiptById(Long receiptId) {
+        return receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new RuntimeException("Reçu non trouvé avec l'id: " + receiptId));
+    }
+
     // Continuation du fichier: src/main/java/com/example/stock/service/ReceiptService.java
     public ReceiptDTO getReceiptBySaleId(Long saleId) {
         Receipt receipt = receiptRepository.findBySaleId(saleId)

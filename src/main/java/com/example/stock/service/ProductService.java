@@ -33,20 +33,40 @@ public class ProductService {
     public Product getProductByCodeBarreWithPrefixSuffix(String codeBarre) {
         Optional<Product> optionalProduct = Optional.empty();
 
-        if (codeBarre != null && codeBarre.length() >= 8) {
-            String prefix = codeBarre.substring(0, 6);
-            String suffix = codeBarre.substring(codeBarre.length() - 2);
+        if (codeBarre == null) {
+            throw new RuntimeException("Le code-barre ne peut pas être null");
+        }
+
+        // Recherche exacte d'abord
+        optionalProduct = productRepository.findByCodeBarre(codeBarre);
+        if (optionalProduct.isPresent()) {
+            return optionalProduct.get();
+        }
+
+        // Si le code-barre est inférieur ou égal à 5 caractères, utiliser uniquement le préfixe
+        if (codeBarre.length() <= 5) {
+            String prefix = codeBarre;
+            List<Product> matchingProducts = productRepository.findByCodeBarreStartingWith(prefix);
+
+            if (!matchingProducts.isEmpty()) {
+                return matchingProducts.get(0);
+            }
+        }
+        // Si le code-barre est supérieur ou égal à 6 caractères, utiliser préfixe + suffixe
+        else if (codeBarre.length() >= 6) {
+            String prefix = codeBarre.substring(0, Math.min(6, codeBarre.length()));
+            String suffix = codeBarre.length() > 2 ?
+                    codeBarre.substring(codeBarre.length() - 2) :
+                    "";
+
             List<Product> matchingProducts = productRepository.findByCodeBarreStartingWithAndCodeBarreEndingWith(prefix, suffix);
 
             if (!matchingProducts.isEmpty()) {
-                optionalProduct = Optional.of(matchingProducts.get(0));
-            } else {
-                optionalProduct = productRepository.findByCodeBarre(codeBarre);
+                return matchingProducts.get(0);
             }
-        } else {
-            optionalProduct = productRepository.findByCodeBarre(codeBarre);
         }
 
-        return optionalProduct.orElseThrow(() -> new RuntimeException("Produit non trouvé avec ce code-barre"));
+        // Si aucun produit n'a été trouvé
+        throw new RuntimeException("Produit non trouvé avec ce code-barre: " + codeBarre);
     }
 }
